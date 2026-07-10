@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 250" width="460" height="250" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif">
+  <!-- Bar chart: values 12 / 30 / 22 / 45 / 28 / 37, nice Y axis 0..50 -->
+  <!-- Grid lines -->
+  <g stroke="#9E9E9E" stroke-opacity="0.2" stroke-width="1">
+    <line x1="34" y1="181.6" x2="450" y2="181.6"/>
+    <line x1="34" y1="138.2" x2="450" y2="138.2"/>
+    <line x1="34" y1="94.8" x2="450" y2="94.8"/>
+    <line x1="34" y1="51.4" x2="450" y2="51.4"/>
+    <line x1="34" y1="8" x2="450" y2="8"/>
+  </g>
+  <!-- Y axis values -->
+  <g font-size="11" fill="#757575" text-anchor="end" dominant-baseline="central">
+    <text x="26" y="225">0</text>
+    <text x="26" y="181.6">10</text>
+    <text x="26" y="138.2">20</text>
+    <text x="26" y="94.8">30</text>
+    <text x="26" y="51.4">40</text>
+    <text x="26" y="8">50</text>
+  </g>
+  <!-- Axis lines -->
+  <g stroke="#9E9E9E" stroke-width="1">
+    <line x1="34" y1="8" x2="34" y2="225"/>
+    <line x1="34" y1="225" x2="450" y2="225"/>
+  </g>
+  <!-- Bars (rounded top corners) -->
+  <g fill="#4E79A7">
+    <path d="M 44.4 225 V 176.92 Q 44.4 172.92 48.4 172.92 H 88.93 Q 92.93 172.92 92.93 176.92 V 225 Z"/>
+    <path d="M 113.73 225 V 98.8 Q 113.73 94.8 117.73 94.8 H 158.27 Q 162.27 94.8 162.27 98.8 V 225 Z"/>
+    <path d="M 183.07 225 V 133.52 Q 183.07 129.52 187.07 129.52 H 227.6 Q 231.6 129.52 231.6 133.52 V 225 Z"/>
+    <path d="M 252.4 225 V 33.7 Q 252.4 29.7 256.4 29.7 H 296.93 Q 300.93 29.7 300.93 33.7 V 225 Z"/>
+    <path d="M 321.73 225 V 107.48 Q 321.73 103.48 325.73 103.48 H 366.27 Q 370.27 103.48 370.27 107.48 V 225 Z"/>
+    <path d="M 391.07 225 V 68.42 Q 391.07 64.42 395.07 64.42 H 435.6 Q 439.6 64.42 439.6 68.42 V 225 Z"/>
+  </g>
+  <!-- X axis labels -->
+  <g font-size="11" fill="#757575" text-anchor="middle">
+    <text x="68.67" y="240">Ene</text>
+    <text x="138" y="240">Feb</text>
+    <text x="207.33" y="240">Mar</text>
+    <text x="276.67" y="240">Abr</text>
+    <text x="346" y="240">May</text>
+    <text x="415.33" y="240">Jun</text>
+  </g>
+</svg>

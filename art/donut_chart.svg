@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 220" width="330" height="220" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif">
+  <!-- Donut chart: holeRatio 0.6, sliceSpacingDegrees 2°, ring stroke at r=80 -->
+  <g fill="none" stroke-width="40">
+    <path d="M 111.40 30.01 A 80 80 0 0 1 159.47 172.87" stroke="#4E79A7"/>
+    <path d="M 157.25 174.56 A 80 80 0 0 1 47.13 159.47" stroke="#F28E2B"/>
+    <path d="M 45.44 157.25 A 80 80 0 0 1 43.83 65.03" stroke="#59A14F"/>
+    <path d="M 45.44 62.75 A 80 80 0 0 1 108.60 30.01" stroke="#E15759"/>
+  </g>
+  <!-- Legend -->
+  <g font-size="12" fill="#757575" dominant-baseline="central">
+    <circle cx="238" cy="70" r="6" fill="#4E79A7"/><text x="252" y="70">Kotlin</text>
+    <circle cx="238" cy="98" r="6" fill="#F28E2B"/><text x="252" y="98">Java</text>
+    <circle cx="238" cy="126" r="6" fill="#59A14F"/><text x="252" y="126">C++</text>
+    <circle cx="238" cy="154" r="6" fill="#E15759"/><text x="252" y="154">Otros</text>
+  </g>
+</svg>

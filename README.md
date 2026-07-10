@@ -5,6 +5,16 @@
 
 A lightweight, animated chart library for **Jetpack Compose** — **pie / donut charts** and **bar charts with X/Y axes** — written 100% in Kotlin with no third-party dependencies.
 
+## Preview
+
+| Pie chart | Donut chart |
+|:---:|:---:|
+| ![Pie chart](art/pie_chart.svg) | ![Donut chart](art/donut_chart.svg) |
+
+**Bar chart with X/Y axes**
+
+![Bar chart](art/bar_chart.svg)
+
 ## Features
 
 **PieChart**

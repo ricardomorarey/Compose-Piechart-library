@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 220" width="330" height="220" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif">
+  <!-- Pie chart: values 40 / 25 / 20 / 15, start angle -90° -->
+  <path d="M 110 110 L 110 10 A 100 100 0 0 1 168.78 190.90 Z" fill="#4E79A7"/>
+  <path d="M 110 110 L 168.78 190.90 A 100 100 0 0 1 29.10 168.78 Z" fill="#F28E2B"/>
+  <path d="M 110 110 L 29.10 168.78 A 100 100 0 0 1 29.10 51.22 Z" fill="#59A14F"/>
+  <path d="M 110 110 L 29.10 51.22 A 100 100 0 0 1 110 10 Z" fill="#E15759"/>
+  <!-- Percentage labels at each slice mid-angle -->
+  <g fill="#FFFFFF" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central">
+    <text x="157.55" y="94.55">40%</text>
+    <text x="102.18" y="159.38">25%</text>
+    <text x="60" y="110">20%</text>
+    <text x="87.30" y="65.45">15%</text>
+  </g>
+  <!-- Legend -->
+  <g font-size="12" fill="#757575" dominant-baseline="central">
+    <circle cx="238" cy="70" r="6" fill="#4E79A7"/><text x="252" y="70">Kotlin</text>
+    <circle cx="238" cy="98" r="6" fill="#F28E2B"/><text x="252" y="98">Java</text>
+    <circle cx="238" cy="126" r="6" fill="#59A14F"/><text x="252" y="126">C++</text>
+    <circle cx="238" cy="154" r="6" fill="#E15759"/><text x="252" y="154">Otros</text>
+  </g>
+</svg>
