@@ -10,11 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
@@ -25,41 +26,37 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import kotlin.math.min
 
 /**
- * An animated vertical bar chart with X and Y axes.
+ * An animated line chart with X and Y axes.
  *
- * The Y axis is divided into round-valued ticks computed from the data (or a
- * fixed maximum via [BarChartStyle.yAxisMax]); the X axis shows one label per
- * bar. Bars grow from the baseline when the chart first appears or when
- * [entries] change.
+ * Points are placed at evenly spaced positions along the X axis, one per
+ * entry, with the Y axis divided into round-valued ticks computed from the
+ * data (or a fixed maximum via [LineChartStyle.yAxisMax]). The line is
+ * revealed from left to right when the chart first appears or when [points]
+ * change.
  *
- * @param entries The bars to display, in order. Negative values are drawn as zero.
+ * @param points The data points to display, in order. Negative values are drawn as zero.
  * @param modifier Modifier for the chart. Give it a size, e.g.
  * `Modifier.fillMaxWidth().height(220.dp)`.
- * @param style Visual configuration; see [BarChartStyle].
- * @param animationSpec Animation used for the growth of the bars.
- * @param selectedIndex When non-null, the bar at this index is highlighted and
- * the rest are dimmed to [BarChartStyle.dimmedAlpha]. Combine with [onBarClick]
- * to implement selection.
+ * @param style Visual configuration; see [LineChartStyle].
+ * @param animationSpec Animation used for the left-to-right reveal.
  * @param contentDescription Description for accessibility services; when null,
- * one is generated from the entry labels and values.
- * @param onBarClick Invoked with the entry whose column is tapped. Taps outside
- * the plot area are ignored.
+ * one is generated from the point labels and values.
+ * @param onPointClick Invoked with the point whose column is tapped. Taps
+ * outside the plot area are ignored.
  */
 @Composable
-public fun BarChart(
-    entries: List<BarEntry>,
+public fun LineChart(
+    points: List<LinePoint>,
     modifier: Modifier = Modifier,
-    style: BarChartStyle = BarChartStyle(),
+    style: LineChartStyle = LineChartStyle(),
     animationSpec: AnimationSpec<Float> = tween(durationMillis = 900, easing = FastOutSlowInEasing),
-    selectedIndex: Int? = null,
     contentDescription: String? = null,
-    onBarClick: ((BarEntry) -> Unit)? = null,
+    onPointClick: ((LinePoint) -> Unit)? = null,
 ) {
     val progress = remember { Animatable(0f) }
-    LaunchedEffect(entries) {
+    LaunchedEffect(points) {
         progress.snapTo(0f)
         progress.animateTo(1f, animationSpec)
     }
@@ -68,7 +65,7 @@ public fun BarChart(
     val density = LocalDensity.current
     val tickCount = style.yTickCount.coerceAtLeast(1)
 
-    val maxValue = entries.maxOfOrNull { it.value }?.coerceAtLeast(0f) ?: 0f
+    val maxValue = points.maxOfOrNull { it.value }?.coerceAtLeast(0f) ?: 0f
     val axisMax = style.yAxisMax?.takeIf { it > 0f } ?: niceAxisMax(maxValue, tickCount)
     val tickValues = remember(axisMax, tickCount) {
         (0..tickCount).map { axisMax * it / tickCount }
@@ -88,14 +85,13 @@ public fun BarChart(
         ?: textMeasurer.measure(AnnotatedString("0"), style.axisTextStyle).size.height.toFloat()
     val leftGutter = if (yLabels.isEmpty()) 0f else yLabels.maxOf { it.size.width } + labelPadding
     val bottomGutter = if (style.showXAxisLabels) labelHeight + xLabelGap else 0f
-    // With values above the bars, reserve room for a full label over the tallest bar.
-    val plotTop = if (style.showValues) labelHeight + xLabelGap else labelHeight / 2f
+    val plotTop = labelHeight / 2f
 
     val description = contentDescription
-        ?: remember(entries) { describeValues(entries.map { it.label to it.value }) }
+        ?: remember(points) { describeValues(points.map { it.label to it.value }) }
 
-    val inputModifier = if (onBarClick != null) {
-        Modifier.pointerInput(entries, leftGutter, bottomGutter, plotTop) {
+    val inputModifier = if (onPointClick != null) {
+        Modifier.pointerInput(points, leftGutter, bottomGutter, plotTop) {
             detectTapGestures { tap ->
                 val index = findBarIndexAt(
                     x = tap.x,
@@ -104,9 +100,9 @@ public fun BarChart(
                     plotRight = size.width.toFloat(),
                     plotTop = plotTop,
                     plotBottom = size.height - bottomGutter,
-                    barCount = entries.size,
+                    barCount = points.size,
                 )
-                if (index != null) onBarClick(entries[index])
+                if (index != null) onPointClick(points[index])
             }
         }
     } else {
@@ -162,71 +158,79 @@ public fun BarChart(
             strokeWidth = thinLine,
         )
 
-        if (entries.isEmpty()) return@Canvas
+        if (points.isEmpty()) return@Canvas
 
-        // Bars and X-axis labels.
-        val slotWidth = (plotRight - plotLeft) / entries.size
-        val barWidth = (slotWidth * (1f - style.barSpacingRatio.coerceIn(0f, 0.9f)))
-            .let { width -> style.barMaxWidth?.let { min(width, it.toPx()) } ?: width }
-        val cornerRadius = style.barCornerRadius.toPx()
+        val slotWidth = (plotRight - plotLeft) / points.size
+        val xs = List(points.size) { plotLeft + slotWidth * (it + 0.5f) }
+        val ys = points.map { point ->
+            plotBottom - (point.value.coerceAtLeast(0f) / axisMax).coerceAtMost(1f) * plotHeight
+        }
 
-        entries.forEachIndexed { index, entry ->
-            val slotLeft = plotLeft + index * slotWidth
-            val barLeft = slotLeft + (slotWidth - barWidth) / 2f
-            val fraction = (entry.value.coerceAtLeast(0f) / axisMax).coerceAtMost(1f)
-            val barHeight = fraction * plotHeight * progress.value
-            val barTop = plotBottom - barHeight
-            val dimmed = selectedIndex != null && selectedIndex != index
-            val baseColor = entry.color ?: style.barColor
-            val barColor = if (dimmed) {
-                baseColor.copy(alpha = baseColor.alpha * style.dimmedAlpha.coerceIn(0f, 1f))
-            } else {
-                baseColor
+        // Line, area and points, revealed from left to right.
+        val revealRight = plotLeft + (plotRight - plotLeft) * progress.value
+        clipRect(left = plotLeft, top = 0f, right = revealRight, bottom = this.size.height) {
+            if (points.size > 1) {
+                val linePath = Path().apply {
+                    moveTo(xs[0], ys[0])
+                    for (i in 1 until points.size) {
+                        if (style.smooth) {
+                            val midX = (xs[i - 1] + xs[i]) / 2f
+                            cubicTo(midX, ys[i - 1], midX, ys[i], xs[i], ys[i])
+                        } else {
+                            lineTo(xs[i], ys[i])
+                        }
+                    }
+                }
+
+                if (style.fillArea) {
+                    val areaPath = Path().apply {
+                        addPath(linePath)
+                        lineTo(xs.last(), plotBottom)
+                        lineTo(xs.first(), plotBottom)
+                        close()
+                    }
+                    drawPath(areaPath, color = style.areaColor ?: style.lineColor.copy(alpha = 0.2f))
+                }
+
+                drawPath(
+                    path = linePath,
+                    color = style.lineColor,
+                    style = Stroke(
+                        width = style.lineWidth.toPx(),
+                        cap = StrokeCap.Round,
+                        join = StrokeJoin.Round,
+                    ),
+                )
             }
 
-            if (barHeight > 0f) {
-                val radius = min(cornerRadius, min(barWidth / 2f, barHeight))
-                val path = Path().apply {
-                    addRoundRect(
-                        RoundRect(
-                            rect = Rect(barLeft, barTop, barLeft + barWidth, plotBottom),
-                            topLeft = CornerRadius(radius),
-                            topRight = CornerRadius(radius),
-                        )
+            if (style.showPoints) {
+                val pointColor = style.pointColor ?: style.lineColor
+                val radius = style.pointRadius.toPx()
+                xs.forEachIndexed { i, x ->
+                    drawCircle(color = pointColor, radius = radius, center = Offset(x, ys[i]))
+                }
+            }
+        }
+
+        // X-axis labels.
+        if (style.showXAxisLabels) {
+            points.forEachIndexed { index, point ->
+                if (point.label.isNotEmpty()) {
+                    val layout = textMeasurer.measure(
+                        text = AnnotatedString(point.label),
+                        style = style.axisTextStyle,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        constraints = Constraints(maxWidth = slotWidth.toInt().coerceAtLeast(1)),
+                    )
+                    drawText(
+                        textLayoutResult = layout,
+                        topLeft = Offset(
+                            x = plotLeft + index * slotWidth + (slotWidth - layout.size.width) / 2f,
+                            y = plotBottom + xLabelGap,
+                        ),
                     )
                 }
-                drawPath(path, color = barColor)
-            }
-
-            if (style.showValues) {
-                val layout = textMeasurer.measure(
-                    text = AnnotatedString(formatAxisValue(entry.value)),
-                    style = style.valueTextStyle,
-                )
-                drawText(
-                    textLayoutResult = layout,
-                    topLeft = Offset(
-                        x = slotLeft + (slotWidth - layout.size.width) / 2f,
-                        y = barTop - xLabelGap - layout.size.height,
-                    ),
-                )
-            }
-
-            if (style.showXAxisLabels && entry.label.isNotEmpty()) {
-                val layout = textMeasurer.measure(
-                    text = AnnotatedString(entry.label),
-                    style = style.axisTextStyle,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    constraints = Constraints(maxWidth = slotWidth.toInt().coerceAtLeast(1)),
-                )
-                drawText(
-                    textLayoutResult = layout,
-                    topLeft = Offset(
-                        x = slotLeft + (slotWidth - layout.size.width) / 2f,
-                        y = plotBottom + xLabelGap,
-                    ),
-                )
             }
         }
     }

@@ -40,6 +40,15 @@ internal fun formatAxisValue(value: Float): String {
 }
 
 /**
+ * Builds an accessibility description listing each item as "label: value",
+ * falling back to the value alone when the label is empty.
+ */
+internal fun describeValues(items: List<Pair<String, Float>>): String =
+    items.joinToString("; ") { (label, value) ->
+        if (label.isEmpty()) formatAxisValue(value) else "$label: ${formatAxisValue(value)}"
+    }
+
+/**
  * Maps a point inside the plot area to the index of the bar slot under it,
  * or null when the point falls outside the plot area or there are no bars.
  */

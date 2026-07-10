@@ -1,6 +1,7 @@
 package com.ricardomorarey.piechart
 
 import kotlin.math.atan2
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 /**
@@ -50,6 +51,17 @@ internal fun computeArcs(
         arc
     }
 }
+
+/**
+ * Builds an accessibility description listing each slice as "label: N%",
+ * falling back to the raw value when the label is empty.
+ */
+internal fun describeArcs(arcs: List<ArcSpec>): String =
+    arcs.joinToString("; ") { arc ->
+        val percent = (arc.fraction * 100f).roundToInt()
+        val name = arc.slice.label.ifEmpty { formatAxisValue(arc.slice.value) }
+        "$name: $percent%"
+    }
 
 /**
  * Finds the arc under a point given by ([dx], [dy]) relative to the chart

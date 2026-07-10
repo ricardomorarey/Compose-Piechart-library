@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 250" width="460" height="250" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif">
+  <!-- Line chart: values 12 / 30 / 22 / 45 / 28 / 37, smooth + fillArea, nice Y axis 0..50 -->
+  <!-- Grid lines -->
+  <g stroke="#9E9E9E" stroke-opacity="0.2" stroke-width="1">
+    <line x1="34" y1="181.6" x2="450" y2="181.6"/>
+    <line x1="34" y1="138.2" x2="450" y2="138.2"/>
+    <line x1="34" y1="94.8" x2="450" y2="94.8"/>
+    <line x1="34" y1="51.4" x2="450" y2="51.4"/>
+    <line x1="34" y1="8" x2="450" y2="8"/>
+  </g>
+  <!-- Y axis values -->
+  <g font-size="11" fill="#757575" text-anchor="end" dominant-baseline="central">
+    <text x="26" y="225">0</text>
+    <text x="26" y="181.6">10</text>
+    <text x="26" y="138.2">20</text>
+    <text x="26" y="94.8">30</text>
+    <text x="26" y="51.4">40</text>
+    <text x="26" y="8">50</text>
+  </g>
+  <!-- Axis lines -->
+  <g stroke="#9E9E9E" stroke-width="1">
+    <line x1="34" y1="8" x2="34" y2="225"/>
+    <line x1="34" y1="225" x2="450" y2="225"/>
+  </g>
+  <!-- Filled area under the smooth curve -->
+  <path d="M 68.67 172.92 C 103.33 172.92 103.33 94.8 138 94.8 C 172.67 94.8 172.67 129.52 207.33 129.52 C 242 129.52 242 29.7 276.67 29.7 C 311.33 29.7 311.33 103.48 346 103.48 C 380.67 103.48 380.67 64.42 415.33 64.42 L 415.33 225 L 68.67 225 Z" fill="#59A14F" fill-opacity="0.2"/>
+  <!-- Smooth line -->
+  <path d="M 68.67 172.92 C 103.33 172.92 103.33 94.8 138 94.8 C 172.67 94.8 172.67 129.52 207.33 129.52 C 242 129.52 242 29.7 276.67 29.7 C 311.33 29.7 311.33 103.48 346 103.48 C 380.67 103.48 380.67 64.42 415.33 64.42" fill="none" stroke="#59A14F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Points -->
+  <g fill="#59A14F">
+    <circle cx="68.67" cy="172.92" r="4"/>
+    <circle cx="138" cy="94.8" r="4"/>
+    <circle cx="207.33" cy="129.52" r="4"/>
+    <circle cx="276.67" cy="29.7" r="4"/>
+    <circle cx="346" cy="103.48" r="4"/>
+    <circle cx="415.33" cy="64.42" r="4"/>
+  </g>
+  <!-- X axis labels -->
+  <g font-size="11" fill="#757575" text-anchor="middle">
+    <text x="68.67" y="240">Ene</text>
+    <text x="138" y="240">Feb</text>
+    <text x="207.33" y="240">Mar</text>
+    <text x="276.67" y="240">Abr</text>
+    <text x="346" y="240">May</text>
+    <text x="415.33" y="240">Jun</text>
+  </g>
+</svg>

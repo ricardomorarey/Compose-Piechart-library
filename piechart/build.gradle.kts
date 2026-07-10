@@ -55,7 +55,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.github.ricardomorarey"
             artifactId = "compose-piechart"
-            version = "1.1.0"
+            version = "1.2.0"
 
             afterEvaluate {
                 from(components["release"])
@@ -63,7 +63,7 @@ publishing {
 
             pom {
                 name.set("Compose PieChart Library")
-                description.set("A lightweight, animated chart library for Jetpack Compose: pie, donut and bar charts.")
+                description.set("A lightweight, animated chart library for Jetpack Compose: pie, donut, bar and line charts.")
                 url.set("https://github.com/ricardomorarey/Compose-Piechart-library")
                 licenses {
                     license {

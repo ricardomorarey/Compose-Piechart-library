@@ -32,6 +32,9 @@ import androidx.compose.ui.unit.dp
 import com.ricardomorarey.piechart.BarChart
 import com.ricardomorarey.piechart.BarChartStyle
 import com.ricardomorarey.piechart.BarEntry
+import com.ricardomorarey.piechart.LineChart
+import com.ricardomorarey.piechart.LineChartStyle
+import com.ricardomorarey.piechart.LinePoint
 import com.ricardomorarey.piechart.PieChart
 import com.ricardomorarey.piechart.PieChartDefaults
 import com.ricardomorarey.piechart.PieChartStyle
@@ -114,12 +117,47 @@ fun SampleScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(220.dp),
-            style = BarChartStyle(barColor = PieChartDefaults.colorFor(0)),
-            onBarClick = { selectedBar = it },
+            style = BarChartStyle(
+                barColor = PieChartDefaults.colorFor(0),
+                showValues = true,
+                barMaxWidth = 48.dp,
+            ),
+            selectedIndex = selectedBar?.let { bar -> bars.indexOf(bar).takeIf { it >= 0 } },
+            onBarClick = { selectedBar = if (selectedBar == it) null else it },
         )
         Text(
             text = selectedBar?.let { "Seleccionado: ${it.label} (${it.value})" }
                 ?: "Toca una barra para seleccionarla",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+
+        Text(text = "Line chart", style = MaterialTheme.typography.titleMedium)
+        val linePoints = remember {
+            listOf(
+                LinePoint(value = 12f, label = "Ene"),
+                LinePoint(value = 30f, label = "Feb"),
+                LinePoint(value = 22f, label = "Mar"),
+                LinePoint(value = 45f, label = "Abr"),
+                LinePoint(value = 28f, label = "May"),
+                LinePoint(value = 37f, label = "Jun"),
+            )
+        }
+        var selectedPoint by remember { mutableStateOf<LinePoint?>(null) }
+        LineChart(
+            points = linePoints,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp),
+            style = LineChartStyle(
+                lineColor = PieChartDefaults.colorFor(2),
+                smooth = true,
+                fillArea = true,
+            ),
+            onPointClick = { selectedPoint = it },
+        )
+        Text(
+            text = selectedPoint?.let { "Seleccionado: ${it.label} (${it.value})" }
+                ?: "Toca un punto para seleccionarlo",
             style = MaterialTheme.typography.bodyMedium,
         )
     }

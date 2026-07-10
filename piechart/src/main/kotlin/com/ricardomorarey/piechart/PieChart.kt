@@ -15,6 +15,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
@@ -37,6 +39,8 @@ import kotlin.math.sin
  * @param style Visual configuration; see [PieChartStyle]. Use `holeRatio` above 0
  * to render a donut instead of a full pie.
  * @param animationSpec Animation used for the initial sweep.
+ * @param contentDescription Description for accessibility services; when null,
+ * one is generated from the slice labels and percentages.
  * @param onSliceClick Invoked with the slice under the finger when the chart is
  * tapped. Taps on the hole or outside the ring are ignored.
  */
@@ -46,11 +50,14 @@ public fun PieChart(
     modifier: Modifier = Modifier,
     style: PieChartStyle = PieChartStyle(),
     animationSpec: AnimationSpec<Float> = tween(durationMillis = 900, easing = FastOutSlowInEasing),
+    contentDescription: String? = null,
     onSliceClick: ((PieSlice) -> Unit)? = null,
 ) {
     val arcs = remember(slices, style.startAngleDegrees, style.sliceSpacingDegrees) {
         computeArcs(slices, style.startAngleDegrees, style.sliceSpacingDegrees)
     }
+
+    val description = contentDescription ?: remember(arcs) { describeArcs(arcs) }
 
     val progress = remember { Animatable(0f) }
     LaunchedEffect(arcs) {
@@ -80,7 +87,11 @@ public fun PieChart(
         Modifier
     }
 
-    Canvas(modifier = modifier.then(inputModifier)) {
+    Canvas(
+        modifier = modifier
+            .then(inputModifier)
+            .semantics { this.contentDescription = description },
+    ) {
         if (arcs.isEmpty()) return@Canvas
 
         val outerRadius = min(this.size.width, this.size.height) / 2f
