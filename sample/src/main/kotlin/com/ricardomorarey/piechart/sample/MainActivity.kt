@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,6 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ricardomorarey.piechart.BarChart
+import com.ricardomorarey.piechart.BarChartStyle
+import com.ricardomorarey.piechart.BarEntry
 import com.ricardomorarey.piechart.PieChart
 import com.ricardomorarey.piechart.PieChartDefaults
 import com.ricardomorarey.piechart.PieChartStyle
@@ -91,6 +96,32 @@ fun SampleScreen() {
         )
 
         Legend(slices)
+
+        Text(text = "Bar chart", style = MaterialTheme.typography.titleMedium)
+        val bars = remember {
+            listOf(
+                BarEntry(value = 12f, label = "Ene"),
+                BarEntry(value = 30f, label = "Feb"),
+                BarEntry(value = 22f, label = "Mar"),
+                BarEntry(value = 45f, label = "Abr"),
+                BarEntry(value = 28f, label = "May"),
+                BarEntry(value = 37f, label = "Jun"),
+            )
+        }
+        var selectedBar by remember { mutableStateOf<BarEntry?>(null) }
+        BarChart(
+            entries = bars,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp),
+            style = BarChartStyle(barColor = PieChartDefaults.colorFor(0)),
+            onBarClick = { selectedBar = it },
+        )
+        Text(
+            text = selectedBar?.let { "Seleccionado: ${it.label} (${it.value})" }
+                ?: "Toca una barra para seleccionarla",
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
